@@ -145,6 +145,25 @@ input:focus,select:focus,textarea:focus,.btn:focus{outline:3px solid rgba(0,0,0,
 .stat-card:hover::before{opacity:1}
 .stat-label{display:block;font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.1rem;margin-bottom:.75rem;font-weight:600}
 .stat-value{display:block;font-size:2.2rem;font-weight:700;color:var(--fg);line-height:1}
+.barber-dashboard .stat-value{font-size:1.9rem}
+.barber-dashboard .stat-card:nth-child(1) .stat-value{letter-spacing:-.02em}
+.barber-dashboard .stat-card:nth-child(2) .stat-value{font-size:2.05rem}
+.calendar-section{margin:2.25rem 0}
+.calendar-shell{background:linear-gradient(135deg,#f9f9f9 0%,#fff 100%);border:1px solid rgba(0,0,0,.06);border-radius:24px;padding:1.5rem;box-shadow:0 16px 40px rgba(0,0,0,.05)}
+.calendar-toolbar{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.calendar-title{font-size:1rem;font-weight:700;text-transform:capitalize;letter-spacing:.04rem;color:var(--fg);padding:.75rem 1rem;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.04)}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.75rem}
+.calendar-weekday,.calendar-day{min-height:92px;border-radius:18px;border:1px solid rgba(0,0,0,.08);background:#fff;padding:.8rem .85rem;box-shadow:0 8px 20px rgba(0,0,0,.04)}
+.calendar-weekday{min-height:auto;background:transparent;border:none;box-shadow:none;padding:.25rem .45rem .55rem;text-align:center;font-size:.82rem;font-weight:700;text-transform:uppercase;letter-spacing:.08rem;color:var(--muted)}
+.calendar-day{display:flex;flex-direction:column;align-items:flex-start;gap:.35rem;text-align:left;cursor:pointer;transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.calendar-day:hover{transform:translateY(-2px);box-shadow:0 12px 24px rgba(0,0,0,.08);border-color:rgba(0,0,0,.2)}
+.calendar-day.outside{opacity:.35;background:#fafafa}
+.calendar-day.today{border-color:#000;box-shadow:0 0 0 1px rgba(0,0,0,.1),0 12px 28px rgba(0,0,0,.08)}
+.calendar-day.has-appointments{background:linear-gradient(180deg,#fff 0%,#f3f3f3 100%)}
+.calendar-day-number{font-size:1.15rem;font-weight:700;color:var(--fg)}
+.calendar-day-count{font-size:.82rem;font-weight:700;color:var(--muted)}
+.calendar-day-money{font-size:.8rem;font-weight:700;color:var(--fg)}
+.calendar-note{margin:1rem 0 0;color:var(--muted);font-size:.98rem}
 .filters-section{background:linear-gradient(135deg,#f9f9f9 0%,#fff 100%);border:1px solid rgba(0,0,0,.06);border-radius:24px;padding:2rem;margin:2rem 0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr auto;gap:1.25rem;align-items:flex-end}
 .filter-group{display:flex;flex-direction:column;gap:.6rem}
 .filter-group label{font-size:.85rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08rem;font-weight:600}
@@ -153,8 +172,8 @@ input:focus,select:focus,textarea:focus,.btn:focus{outline:3px solid rgba(0,0,0,
 .filter-actions{display:flex;gap:.75rem;flex-wrap:wrap}
 .filter-actions .btn{padding:.85rem 1.35rem;font-size:.9rem;white-space:nowrap;border-radius:12px;transition:all .2s ease}
 @media (max-width:1200px){.filters-section{grid-template-columns:repeat(2,1fr)}.filter-actions{grid-column:1/-1}}
-@media (max-width:900px){.hero{grid-template-columns:1fr;}.hero-card{order:-1;}.hero-actions{flex-direction:column;align-items:start;}.header-row{flex-direction:column;align-items:flex-start;}.main-nav ul{flex-wrap:wrap;gap:.75rem;}.site-header{padding-bottom:0}.stats-section{grid-template-columns:repeat(3,1fr)}.filters-section{grid-template-columns:1fr;grid-auto-rows:auto}.filter-actions{grid-column:auto;flex-direction:column}.filter-actions .btn{width:100%}.appointments-list li{grid-template-columns:1fr;gap:.75rem}.appointment-actions{width:100%;flex-direction:column}.appointment-actions .btn{width:100%}}
-@media (max-width:640px){.stats-section{grid-template-columns:repeat(2,1fr);gap:.75rem;padding:1rem}.stat-card{padding:1rem}.stat-value{font-size:1.8rem}.filters-section{padding:1rem}.filter-input{font-size:1rem}.filters-section{grid-template-columns:1fr}.filter-actions{width:100%}.filter-actions .btn{width:100%}}
+@media (max-width:900px){.hero{grid-template-columns:1fr;}.hero-card{order:-1;}.hero-actions{flex-direction:column;align-items:start;}.header-row{flex-direction:column;align-items:flex-start;}.main-nav ul{flex-wrap:wrap;gap:.75rem;}.site-header{padding-bottom:0}.stats-section{grid-template-columns:repeat(2,1fr)}.calendar-grid{grid-template-columns:repeat(2,1fr)}.calendar-weekday{display:none}.filters-section{grid-template-columns:1fr;grid-auto-rows:auto}.filter-actions{grid-column:auto;flex-direction:column}.filter-actions .btn{width:100%}.appointments-list li{grid-template-columns:1fr;gap:.75rem}.appointment-actions{width:100%;flex-direction:column}.appointment-actions .btn{width:100%}}
+@media (max-width:640px){.stats-section{grid-template-columns:1fr;gap:.75rem;padding:1rem}.stat-card{padding:1rem}.stat-value{font-size:1.8rem}.barber-dashboard .stat-value{font-size:1.65rem}.filters-section{padding:1rem}.filter-input{font-size:1rem}.filters-section{grid-template-columns:1fr}.filter-actions{width:100%}.filter-actions .btn{width:100%}.calendar-shell{padding:1rem}.calendar-grid{grid-template-columns:1fr}.calendar-day{min-height:82px}}
 /* ADMIN SPECIFIC STYLES */
 .admin-header{display:flex;justify-content:space-between;align-items:center}.admin-nav{flex:1}.dark-mode-toggle{background:none;border:none;font-size:1.5rem;cursor:pointer;transition:transform .2s ease}.dark-mode-toggle:hover{transform:scale(1.1)}.admin-main{padding-top:1rem}
 .admin-tabs{display:flex;gap:.5rem;border-bottom:2px solid var(--border);margin-bottom:2rem;flex-wrap:wrap;position:relative;align-items:center}.tab-btn{background:none;border:none;padding:1rem 1.25rem;cursor:pointer;font-weight:600;color:var(--muted);transition:all .2s ease;border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}.tab-btn.active{color:var(--fg);border-bottom-color:var(--accent)}.tab-btn:hover{color:var(--fg)}.tab-notification{background:#dc3545;color:#fff;border-radius:999px;padding:.25rem .6rem;font-size:.75rem;font-weight:700;margin-left:auto}

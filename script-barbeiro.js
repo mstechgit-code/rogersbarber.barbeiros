@@ -12,6 +12,11 @@
   ];
 
   const AUTH_KEY = 'barberUserSession';
+  const CURRENCY = new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  });
+  let calendarAnchor = new Date();
 
   function qs(selector) {
     return document.querySelector(selector);
@@ -92,6 +97,11 @@
     return service ? service.name : serviceId;
   }
 
+  function getServicePrice(serviceId) {
+    const service = SERVICES.find((item) => item.id === serviceId);
+    return service ? Number(service.price || 0) : 0;
+  }
+
   function getAssignedAppointments(userId) {
     return getAppointments().filter((appointment) => {
       const assignedId = String(appointment.assignedBarberId || '');
@@ -100,6 +110,65 @@
     }).sort((a, b) => {
       return a.date.localeCompare(b.date) || a.time.localeCompare(b.time);
     });
+  }
+
+  function getOwnedAppointments(userId) {
+    return getAppointments().filter((appointment) => String(appointment.assignedBarberId || '') === String(userId));
+  }
+
+  function getCompletedAppointments(userId) {
+    return getOwnedAppointments(userId).filter((appointment) => appointment.status === 'completed');
+  }
+
+  function getMonthlyAppointments(userId, anchorDate) {
+    const year = anchorDate.getFullYear();
+    const month = anchorDate.getMonth();
+    const monthPrefix = `${year}-${String(month + 1).padStart(2, '0')}`;
+    return getCompletedAppointments(userId).filter((appointment) => String(appointment.date || '').startsWith(monthPrefix));
+  }
+
+  function getMonthlyRevenue(userId, anchorDate) {
+    return getMonthlyAppointments(userId, anchorDate).reduce((total, appointment) => {
+      return total + getServicePrice(appointment.service);
+    }, 0);
+  }
+
+  function getCompletedClientCount(userId, anchorDate) {
+    return getMonthlyAppointments(userId, anchorDate).length;
+  }
+
+  function formatMoney(value) {
+    return CURRENCY.format(Number(value || 0));
+  }
+
+  function getMonthLabel(date) {
+    return date.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  }
+
+  function toLocalDateKey(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  function getCalendarMatrix(anchorDate) {
+    const firstDay = new Date(anchorDate.getFullYear(), anchorDate.getMonth(), 1);
+    const startDay = firstDay.getDay() === 0 ? 6 : firstDay.getDay() - 1;
+    const startDate = new Date(firstDay);
+    startDate.setDate(firstDay.getDate() - startDay);
+
+    const matrix = [];
+    const cursor = new Date(startDate);
+    for (let week = 0; week < 6; week += 1) {
+      const row = [];
+      for (let day = 0; day < 7; day += 1) {
+        row.push(new Date(cursor));
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      matrix.push(row);
+    }
+    return matrix;
   }
 
   function setStatus(message, type) {
@@ -125,21 +194,98 @@
 
   function renderStats(user) {
     const appointments = getAssignedAppointments(user.id);
-    const ownAppointments = getAppointments().filter((appointment) => String(appointment.assignedBarberId || '') === String(user.id));
+    const ownAppointments = getOwnedAppointments(user.id);
     const openAppointments = getAppointments().filter((appointment) => !appointment.assignedBarberId && (appointment.status || 'pending') === 'pending');
-    const pending = ownAppointments.filter((appointment) => (appointment.status || 'pending') === 'pending');
     const done = ownAppointments.filter((appointment) => appointment.status === 'completed');
+    const monthlyRevenue = getMonthlyRevenue(user.id, calendarAnchor);
+    const monthlyClients = getCompletedClientCount(user.id, calendarAnchor);
+    const monthlyDone = getMonthlyAppointments(user.id, calendarAnchor).length;
 
     const bind = (selector, value) => {
       const target = qs(selector);
       if (target) target.textContent = String(value);
     };
 
+    bind('#barber-stat-revenue', formatMoney(monthlyRevenue));
+    bind('#barber-stat-clients', monthlyClients);
+    bind('#barber-stat-done', monthlyDone);
     bind('#barber-open-count', appointments.filter((appointment) => (appointment.status || 'pending') === 'pending').length);
     bind('#barber-stat-open', openAppointments.length);
-    bind('#barber-stat-mine', ownAppointments.length);
-    bind('#barber-stat-pending', pending.length);
-    bind('#barber-stat-done', done.length);
+  }
+
+  function renderCalendar(user) {
+    const grid = qs('#barber-calendar');
+    const title = qs('#calendar-month-title');
+    const note = qs('#barber-calendar-note');
+    if (!grid) return;
+
+    const monthAppointments = getMonthlyAppointments(user.id, calendarAnchor);
+    const appointmentMap = new Map();
+    monthAppointments.forEach((appointment) => {
+      if (!appointment.date) return;
+      const current = appointmentMap.get(appointment.date) || [];
+      current.push(appointment);
+      appointmentMap.set(appointment.date, current);
+    });
+
+    if (title) title.textContent = getMonthLabel(calendarAnchor);
+    grid.innerHTML = '';
+
+    const weekLabels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom'];
+    weekLabels.forEach((label) => {
+      const header = document.createElement('div');
+      header.className = 'calendar-weekday';
+      header.textContent = label;
+      grid.appendChild(header);
+    });
+
+    const today = toLocalDateKey(new Date());
+    const matrix = getCalendarMatrix(calendarAnchor);
+
+    matrix.forEach((week) => {
+      week.forEach((day) => {
+        const cell = document.createElement('button');
+        const dateKey = toLocalDateKey(day);
+        const isCurrentMonth = day.getMonth() === calendarAnchor.getMonth();
+        const appointments = appointmentMap.get(dateKey) || [];
+        const totalRevenue = appointments.reduce((sum, appointment) => sum + getServicePrice(appointment.service), 0);
+
+        cell.type = 'button';
+        cell.className = 'calendar-day';
+        if (!isCurrentMonth) cell.classList.add('outside');
+        if (dateKey === today) cell.classList.add('today');
+        if (appointments.length > 0) cell.classList.add('has-appointments');
+
+        cell.innerHTML = `
+          <span class="calendar-day-number">${day.getDate()}</span>
+          <span class="calendar-day-count">${appointments.length ? `${appointments.length} corte${appointments.length > 1 ? 's' : ''}` : 'Livre'}</span>
+          <span class="calendar-day-money">${appointments.length ? formatMoney(totalRevenue) : ''}</span>
+        `;
+
+        cell.addEventListener('click', () => {
+          if (!note) return;
+          if (appointments.length === 0) {
+            note.textContent = `${day.toLocaleDateString('pt-BR')} sem atendimentos concluidos.`;
+            return;
+          }
+
+          const summary = appointments
+            .map((appointment) => `${appointment.time} - ${appointment.name} (${getServiceName(appointment.service)})`)
+            .join(' | ');
+          note.textContent = `${day.toLocaleDateString('pt-BR')}: ${summary}`;
+        });
+
+        grid.appendChild(cell);
+      });
+    });
+
+    if (note) {
+      if (monthAppointments.length === 0) {
+        note.textContent = 'Nenhum atendimento concluido neste mes ainda.';
+      } else {
+        note.textContent = `${monthAppointments.length} atendimento${monthAppointments.length > 1 ? 's' : ''} concluido${monthAppointments.length > 1 ? 's' : ''} neste mes.`;
+      }
+    }
   }
 
   function renderWorkList(user) {
@@ -218,6 +364,7 @@
   function renderPortal(user) {
     renderHeader(user);
     renderStats(user);
+    renderCalendar(user);
     renderWorkList(user);
   }
 
@@ -260,6 +407,8 @@
     const passwordInput = qs('#barber-password');
     const logoutButton = qs('#barber-logout');
     const refreshButton = qs('#barber-refresh');
+    const prevButton = qs('#calendar-prev');
+    const nextButton = qs('#calendar-next');
 
     function tryLogin() {
       const user = findMatchingUser(loginInput?.value, passwordInput?.value);
@@ -297,6 +446,18 @@
       const user = getSessionUser();
       if (user) renderPortal(user);
     });
+
+    prevButton?.addEventListener('click', () => {
+      calendarAnchor = new Date(calendarAnchor.getFullYear(), calendarAnchor.getMonth() - 1, 1);
+      const user = getSessionUser();
+      if (user) renderPortal(user);
+    });
+
+    nextButton?.addEventListener('click', () => {
+      calendarAnchor = new Date(calendarAnchor.getFullYear(), calendarAnchor.getMonth() + 1, 1);
+      const user = getSessionUser();
+      if (user) renderPortal(user);
+    });
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -307,6 +468,7 @@
 
     const sessionUser = getSessionUser();
     if (sessionUser && sessionUser.role === 'barbeiro' && findMatchingUser(sessionUser.login, sessionUser.password)) {
+      calendarAnchor = new Date();
       setVisible(true);
       renderPortal(sessionUser);
     } else {

@@ -47,7 +47,6 @@
           <p class="lead">Assuma atendimentos disponiveis, conclua os seus trabalhos e mantenha o status da agenda atualizado.</p>
           <div class="hero-actions">
             <button class="cta" id="barber-refresh" type="button">Atualizar fila</button>
-            <a class="btn" href="admin.html">Voltar ao dono</a>
           </div>
         </div>
         <aside class="hero-card" aria-label="Resumo do barbeiro">
@@ -59,22 +58,39 @@
         </aside>
       </section>
 
-      <section class="stats-section" aria-label="Indicadores do barbeiro">
+      <section class="stats-section barber-dashboard" aria-label="Indicadores do barbeiro">
+        <div class="stat-card">
+          <span class="stat-label">Rendimento do mes</span>
+          <span class="stat-value" id="barber-stat-revenue">R$ 0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Clientes cortados</span>
+          <span class="stat-value" id="barber-stat-clients">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Atendimentos do mes</span>
+          <span class="stat-value" id="barber-stat-done">0</span>
+        </div>
         <div class="stat-card">
           <span class="stat-label">Disponiveis</span>
           <span class="stat-value" id="barber-stat-open">0</span>
         </div>
-        <div class="stat-card">
-          <span class="stat-label">Minhas</span>
-          <span class="stat-value" id="barber-stat-mine">0</span>
+      </section>
+
+      <section class="calendar-section" aria-labelledby="barber-calendar-title">
+        <div class="section-heading">
+          <p class="eyebrow">Calendario</p>
+          <h3 id="barber-calendar-title">Agenda mensal do barbeiro</h3>
+          <p>Veja os dias com atendimentos concluidos e use o calendario para acompanhar o ritmo da semana e do mes.</p>
         </div>
-        <div class="stat-card">
-          <span class="stat-label">Pendentes</span>
-          <span class="stat-value" id="barber-stat-pending">0</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-label">Concluidos</span>
-          <span class="stat-value" id="barber-stat-done">0</span>
+        <div class="calendar-shell">
+          <div class="calendar-toolbar">
+            <button class="btn btn-secondary" id="calendar-prev" type="button">Anterior</button>
+            <div class="calendar-title" id="calendar-month-title">Mes atual</div>
+            <button class="btn btn-secondary" id="calendar-next" type="button">Proximo</button>
+          </div>
+          <div class="calendar-grid" id="barber-calendar" aria-live="polite"></div>
+          <p class="calendar-note" id="barber-calendar-note">Selecione um dia para ver os atendimentos concluidos.</p>
         </div>
       </section>
 
