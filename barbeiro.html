@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com;">
+  <title>Portal do Barbeiro - Dono Barbearia</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Pular para conteudo</a>
+
+  <div id="barber-auth-modal" class="modal-overlay" style="display:flex; align-items:center; justify-content:center;">
+    <div class="modal-content" style="width:100%; max-width:420px;">
+      <h2>Portal do barbeiro</h2>
+      <p>Entre com o login cadastrado no painel do dono.</p>
+      <label for="barber-login">Login</label>
+      <input type="text" id="barber-login" autocomplete="username" placeholder="login">
+      <label for="barber-password">Senha</label>
+      <input type="password" id="barber-password" autocomplete="current-password" placeholder="senha">
+      <button class="btn" id="barber-login-btn" style="width:100%; margin-top:12px;">Entrar</button>
+      <a href="index.html" class="btn btn-secondary" style="width:100%; display:block; text-align:center; margin-top:10px;">Voltar</a>
+      <p id="barber-auth-status" role="status" aria-live="polite" class="status"></p>
+    </div>
+  </div>
+
+  <div id="barber-content" style="display:none;">
+    <header class="site-header">
+      <div class="container header-row">
+        <a href="index.html" class="logo">
+          <div>
+            <p class="eyebrow">Dono Barbearia</p>
+            <h1 class="brand">Portal do barbeiro</h1>
+          </div>
+        </a>
+        <button class="btn btn-secondary" id="barber-logout" type="button">Sair</button>
+      </div>
+    </header>
+
+    <main id="main" class="container">
+      <section class="hero" aria-labelledby="barber-hero-title">
+        <div class="hero-intro">
+          <p class="eyebrow">Agenda individual</p>
+          <h2 id="barber-hero-title">Sua fila de atendimentos, em um unico lugar</h2>
+          <p class="lead">Assuma atendimentos disponiveis, conclua os seus trabalhos e mantenha o status da agenda atualizado.</p>
+          <div class="hero-actions">
+            <button class="cta" id="barber-refresh" type="button">Atualizar fila</button>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Resumo do barbeiro">
+          <div class="hero-score"><span id="barber-open-count">0</span></div>
+          <p class="muted" id="barber-user-info">Nenhum usuario autenticado</p>
+          <p class="muted">Fila disponivel no seu acesso</p>
+          <div class="info-chip open" id="barber-role-chip">Barbeiro</div>
+          <p class="info-line">Acesso baseado nos usuarios criados no painel do dono.</p>
+        </aside>
+      </section>
+
+      <section class="stats-section" aria-label="Indicadores do barbeiro">
+        <div class="stat-card">
+          <span class="stat-label">Disponiveis</span>
+          <span class="stat-value" id="barber-stat-open">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Minhas</span>
+          <span class="stat-value" id="barber-stat-mine">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Pendentes</span>
+          <span class="stat-value" id="barber-stat-pending">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Concluidos</span>
+          <span class="stat-value" id="barber-stat-done">0</span>
+        </div>
+      </section>
+
+      <section class="appointments-section" aria-labelledby="barber-list-title">
+        <h3 class="appointments-title" id="barber-list-title">Fila de trabalho</h3>
+        <p id="barber-empty" class="status" aria-live="polite"></p>
+        <ul id="barber-work-list" class="appointments-list"></ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <p>&copy; <span id="year-barber"></span> Dono Barbearia</p>
+      </div>
+    </footer>
+  </div>
+
+  <script src="script-barbeiro.js" defer></script>
+</body>
+</html>
